@@ -1,24 +1,31 @@
 # UltraSandbox
 
-# Turning Ultrakill into a garrys mod game
+# Turning Ultrakill into a garrys mod like game
 
 
 Welcome to my repo! This is a pretty basic mod but the premise is for players to be able to make "model packs" that can be loaded within the game to make a sort of "garrys mod addon" feel 
+
+
 
 # Putting your assetbundle (NOTE: Current functionality of the mod only allows 1 asset bundle named "testassets" to be loaded however in the future this will be changed to load every bundle file in HotLoadedBundles)
 
 All of the assetbundles go into Bepinex/Plugins/HotLoadedBundles 
 
-# BUILDING THE MOD
 
-[Just look at the readme here](https://github.com/Minepool9/UltraSandbox/tree/main/UltraSandbox)
+
+# BUILDING THE MOD (note: this is different than building an actual assetbundle)
+
+[Just look at the readme here](https://github.com/Minepool9/UltraSandbox/blob/main/UltraSandbox/README.md)
+
 
 
 # TO DO FOR REPO
 
 1.wiki
 
-2.building instructions
+~~2.building instructions~~
+
+
 
 # TO DO FOR THE MOD
 
