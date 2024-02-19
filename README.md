@@ -14,13 +14,18 @@ All of the assetbundles go into Bepinex/Plugins/HotLoadedBundles
 
 1.wiki
 
-#TO DO FOR THE MOD
+# TO DO FOR THE MOD
 
 loading more than 1 assetbundle
-rotating any object in sandbox 
+
+rotating any object in sandbox
+
 making ragdolls be able to be moved and interactable 
+
 when loading more than 1 assetbundle you can change what assetbundle you are loading from instead of 1 huge list of objects 
-searching for objects 
-basic buttons and basically redstone 
+
+searching for objects via a gui
+
+basic buttons and basically redstone from minecraft
 
 and finally a "save" function
