@@ -9,6 +9,10 @@ Welcome to my repo! This is a pretty basic mod but the premise is for players to
 
 All of the assetbundles go into Bepinex/Plugins/HotLoadedBundles 
 
+# BUILDING THE MOD
+
+(Just look at the readme here)[https://github.com/Minepool9/UltraSandbox/tree/main/UltraSandbox]
+
 
 # TO DO FOR REPO
 
