@@ -42,3 +42,9 @@ searching for objects via a gui
 basic buttons and basically redstone from minecraft
 
 and finally a "save" function
+
+
+
+# TO DO FOR MYSELF
+
+fucking understanding how shaders work so you dont have to manually change the shader of a material everytime you create an assetbundle, PLEASE IF YOU ARE MORE EXPERIENCED WITH HOW SHADERS WORK FUCKING MAKE A PULL REQUEST AND WRITE CODE FOR IT PLEASE I BEG YOU
