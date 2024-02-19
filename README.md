@@ -11,7 +11,7 @@ All of the assetbundles go into Bepinex/Plugins/HotLoadedBundles
 
 # BUILDING THE MOD
 
-(Just look at the readme here)[https://github.com/Minepool9/UltraSandbox/tree/main/UltraSandbox]
+[Just look at the readme here](https://github.com/Minepool9/UltraSandbox/tree/main/UltraSandbox)
 
 
 # TO DO FOR REPO
