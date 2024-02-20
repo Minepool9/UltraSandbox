@@ -60,7 +60,7 @@ namespace Secondultrakillmod
 
             // Apply Harmony patches
             Harmony harmony = new Harmony("doomahreal.ultrakill.Assetbundleloader");
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
+            harmony.PatchAll();
         }
 
         // Coroutine to load all asset bundles
