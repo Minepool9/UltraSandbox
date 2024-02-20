@@ -29,13 +29,13 @@ All of the assetbundles go into Bepinex/Plugins/HotLoadedBundles
 
 # TO DO FOR THE MOD
 
-loading more than 1 assetbundle
+~~loading more than 1 assetbundle~~
 
 rotating any object in sandbox
 
 making ragdolls be able to be moved and interactable 
 
-when loading more than 1 assetbundle you can change what assetbundle you are loading from instead of 1 huge list of objects 
+~~when loading more than 1 assetbundle you can change what assetbundle you are loading from instead of 1 huge list of objects~~ 
 
 searching for objects via a gui
 
@@ -47,4 +47,4 @@ and finally a "save" function
 
 # TO DO FOR MYSELF
 
-fucking understanding how shaders work so you dont have to manually change the shader of a material everytime you create an assetbundle, PLEASE IF YOU ARE MORE EXPERIENCED WITH HOW SHADERS WORK FUCKING MAKE A PULL REQUEST AND WRITE CODE FOR IT PLEASE I BEG YOU
+fucking understanding how shaders work so you dont have to manually change the shader of a material everytime you create an assetbundle, PLEASE IF YOU ARE MORE EXPERIENCED WITH HOW SHADERS WORK FUCKING MAKE A PULL REQUEST AND WRITE CODE FOR IT PLEASE I BEG YOU I JUST WANNA USE PSX/VERTEXLIT/VERTEXLIT
