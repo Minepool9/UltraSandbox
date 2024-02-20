@@ -6,6 +6,7 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq; // Added for LINQ
 using Configgy;
 
 namespace Secondultrakillmod
@@ -14,22 +15,23 @@ namespace Secondultrakillmod
     [BepInDependency("Hydraxous.ULTRAKILL.Configgy", BepInDependency.DependencyFlags.HardDependency)] 
     public class Assetbundleloader : BaseUnityPlugin
     {
-        public string assetBundleName = "testassets"; // Name of the asset bundle
-        public string[] assetNames; // Names of the assets within the bundle
-        private GameObject[] loadedObjects; // Loaded GameObjects
+        private Dictionary<string, List<GameObject>> loadedObjectsDict = new Dictionary<string, List<GameObject>>(); // Dictionary to store loaded GameObjects from each asset bundle
         private List<GameObject> placedObjects = new List<GameObject>(); // Keep track of placed objects
         private int currentObjectIndex = 0; // Index of the currently selected object
-
+        private string currentAssetBundleName; // Name of the currently selected asset bundle
+        private GameObject[] loadedObjects; // Store loaded objects
+        
         [Configgable("", "Build button")]
         private static ConfigKeybind Keybind = new ConfigKeybind(KeyCode.X);
         
-        [Configgable("", "Undo")]
-        private static ConfigKeybind Keybind2 = new ConfigKeybind(KeyCode.Z);
-        
+        [Configgable("", "Switch asset bundle")]
+        private static ConfigKeybind Keybind1 = new ConfigKeybind(KeyCode.N);
+
         [Configgable("", "Scroll through object list")]
         private static ConfigKeybind Keybind3 = new ConfigKeybind(KeyCode.C);
 
         public static ConfigBuilder ConfigBuilder { get; private set; }
+        
         void Awake()
         {
             ConfigBuilder = new ConfigBuilder("doomahreal.ultrakill.Assetbundleloader", "Assetbundleloader");
@@ -38,10 +40,10 @@ namespace Secondultrakillmod
 
         void Start()
         {
-            StartCoroutine(LoadAssetBundle());
+            StartCoroutine(LoadAssetBundles());
         }
 
-        IEnumerator LoadAssetBundle()
+        IEnumerator LoadAssetBundles()
         {
             // Get the directory where the plugin DLL is located
             string pluginDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -63,57 +65,75 @@ namespace Secondultrakillmod
                 yield break; // Exit coroutine early
             }
 
-            // Construct the path to the asset bundle inside the HotLoadedBundles folder
-            string assetBundlePath = Path.Combine(bundlesDirectory, assetBundleName);
-            Debug.Log("Asset bundle path: " + assetBundlePath);
-
-            // Check if the asset bundle file exists
-            if (!File.Exists(assetBundlePath))
+            // Load all asset bundles in the HotLoadedBundles folder
+            string[] bundlePaths = Directory.GetFiles(bundlesDirectory, "*.bundle");
+            foreach (string bundlePath in bundlePaths)
             {
-                // Send a HUD message indicating missing asset bundle
-                Debug.Log("Asset bundle file not found. Please check if you have the folder with the mod or an asset bundle.");
-                yield break; // Exit coroutine early
-            }
+                // Load the asset bundle
+                var assetBundleRequest = AssetBundle.LoadFromFileAsync(bundlePath);
+                yield return assetBundleRequest;
 
-            // Load the asset bundle
-            var assetBundleRequest = AssetBundle.LoadFromFileAsync(assetBundlePath);
-            yield return assetBundleRequest;
+                // Get the loaded asset bundle
+                AssetBundle assetBundle = assetBundleRequest.assetBundle;
 
-            // Get the loaded asset bundle
-            AssetBundle assetBundle = assetBundleRequest.assetBundle;
+                // Get the name of the asset bundle
+                string bundleName = Path.GetFileNameWithoutExtension(bundlePath);
 
-            // Load the asset names from the bundle
-            assetNames = assetBundle.GetAllAssetNames();
+                // Load the asset names from the bundle
+                string[] assetNames = assetBundle.GetAllAssetNames();
 
-            // Filter only the prefab asset names
-            List<string> prefabNames = new List<string>();
-            foreach (string name in assetNames)
-            {
-                if (name.EndsWith(".prefab"))
+                // Filter only the prefab asset names
+                List<GameObject> prefabList = new List<GameObject>();
+                foreach (string name in assetNames)
                 {
-                    prefabNames.Add(name);
+                    if (name.EndsWith(".prefab"))
+                    {
+                        var assetLoadRequest = assetBundle.LoadAssetAsync<GameObject>(name);
+                        yield return assetLoadRequest;
+                        GameObject prefab = assetLoadRequest.asset as GameObject;
+                        prefabList.Add(prefab);
+                    }
                 }
+
+                // Add the loaded GameObjects to the dictionary
+                loadedObjectsDict.Add(bundleName, prefabList);
+
+                // Unload the asset bundle
+                assetBundle.Unload(false);
             }
 
-            // Load the GameObjects from the bundle
-            loadedObjects = new GameObject[prefabNames.Count];
-            for (int i = 0; i < prefabNames.Count; i++)
+            // Load the first asset bundle in the dictionary
+            if (loadedObjectsDict.Count > 0)
             {
-                var assetLoadRequest = assetBundle.LoadAssetAsync<GameObject>(prefabNames[i]);
-                yield return assetLoadRequest;
-                loadedObjects[i] = assetLoadRequest.asset as GameObject;
+                currentAssetBundleName = loadedObjectsDict.Keys.First();
+                currentObjectIndex = 0; // Reset object index
+                LoadObjectsFromAssetBundle(currentAssetBundleName);
             }
+            else
+            {
+                Debug.Log("No asset bundles found in the HotLoadedBundles folder.");
+            }
+        }
 
-            // Unload the asset bundle
-            assetBundle.Unload(false);
+        void LoadObjectsFromAssetBundle(string bundleName)
+        {
+            if (loadedObjectsDict.TryGetValue(bundleName, out List<GameObject> prefabList))
+            {
+                // Get the list of loaded GameObjects
+                loadedObjects = prefabList.ToArray();
 
-            // Instantiate the first GameObject at a default position
-            InstantiateCurrentObject();
+                // Instantiate the first GameObject at a default position
+                InstantiateCurrentObject();
+            }
+            else
+            {
+                Debug.Log("Asset bundle not found: " + bundleName);
+            }
         }
 
         void Update()
         {
-            // Check if Numpad 1 key is pressed
+            // Check if Build button key is pressed
             if (Input.GetKeyDown(Keybind.Value))
             {
                 if (CheckForMissingBundle())
@@ -122,16 +142,13 @@ namespace Secondultrakillmod
                 }
             }
 
-            // Check if Z key is pressed to delete the last placed object
-            if (Input.GetKeyDown(Keybind2.Value))
+            // Check if Switch asset bundle key is pressed
+            if (Input.GetKeyDown(Keybind1.Value))
             {
-                if (CheckForMissingBundle())
-                {
-                    DeleteLastPlacedObject();
-                }
+                SwitchAssetBundle();
             }
 
-            // Check if Numpad + key is pressed to scroll up the list
+            // Check if Scroll key is pressed to scroll through object list
             if (Input.GetKeyDown(Keybind3.Value))
             {
                 if (CheckForMissingBundle())
@@ -185,19 +202,6 @@ namespace Secondultrakillmod
             }
         }
 
-        void DeleteLastPlacedObject()
-        {
-            if (placedObjects.Count > 0)
-            {
-                GameObject lastPlacedObject = placedObjects[placedObjects.Count - 1];
-                placedObjects.RemoveAt(placedObjects.Count - 1);
-                Destroy(lastPlacedObject);
-
-                // Send a HUD message indicating the last object was undone
-                MonoSingleton<HudMessageReceiver>.Instance.SendHudMessage("Undid last object", "", "", 0, true);
-            }
-        }
-
         void ScrollObjectList(int direction)
         {
             // Increment or decrement the current object index based on the direction
@@ -228,22 +232,59 @@ namespace Secondultrakillmod
         {
             if (loadedObjects != null && loadedObjects.Length > 0 && currentObjectIndex >= 0 && currentObjectIndex < loadedObjects.Length)
             {
-                // Filter assetNames array to include only .prefab files
-                List<string> prefabNames = new List<string>();
-                foreach (string name in assetNames)
-                {
-                    if (name.EndsWith(".prefab"))
-                    {
-                        prefabNames.Add(name);
-                    }
-                }
-
-                // Get the name of the currently selected .prefab object
-                string selectedObjectName = Path.GetFileNameWithoutExtension(prefabNames[currentObjectIndex]);
+                // Get the name of the currently selected object
+                string selectedObjectName = loadedObjects[currentObjectIndex].name;
 
                 // Send the HUD message with the name of the currently selected object
                 MonoSingleton<HudMessageReceiver>.Instance.SendHudMessage("Current object is: " + selectedObjectName, "", "", 0, false);
             }
         }
+
+		void SwitchAssetBundle()
+		{
+			// Get the directory where the plugin DLL is located
+			string pluginDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			Debug.Log("Plugin directory: " + pluginDirectory);
+
+			// Go back one directory level (assuming the plugin is inside a "plugins" folder)
+			string parentDirectory = Path.GetDirectoryName(pluginDirectory);
+			Debug.Log("Parent directory: " + parentDirectory);
+
+			// Construct the path to the HotLoadedBundles folder
+			string bundlesDirectory = Path.Combine(parentDirectory, "HotLoadedBundles");
+			Debug.Log("Bundles directory: " + bundlesDirectory);
+
+			// Get all asset bundle files in the HotLoadedBundles folder
+			string[] bundleFiles = Directory.GetFiles(bundlesDirectory, "*.bundle");
+
+			// Filter out the currently loaded asset bundle
+			string currentBundleName = currentAssetBundleName + ".bundle";
+			List<string> availableBundles = new List<string>();
+			foreach (string bundleFile in bundleFiles)
+			{
+				if (Path.GetFileName(bundleFile) != currentBundleName)
+				{
+					availableBundles.Add(bundleFile);
+				}
+			}
+
+			// Check if there are any available asset bundles to switch to
+			if (availableBundles.Count > 0)
+			{
+				// Randomly select an asset bundle from the available ones
+				int randomIndex = Random.Range(0, availableBundles.Count);
+				string randomBundlePath = availableBundles[randomIndex];
+
+				// Extract the name of the selected bundle
+				string randomBundleName = Path.GetFileNameWithoutExtension(randomBundlePath);
+
+				// Load the selected asset bundle
+				StartCoroutine(LoadAssetBundles()); // Corrected method call
+			}
+			else
+			{
+				Debug.Log("No other asset bundles available to switch to.");
+			}
+		}
     }
 }
