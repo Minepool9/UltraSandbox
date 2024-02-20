@@ -15,43 +15,65 @@ namespace Secondultrakillmod
     [BepInDependency("Hydraxous.ULTRAKILL.Configgy", BepInDependency.DependencyFlags.HardDependency)] 
     public class Assetbundleloader : BaseUnityPlugin
     {
-        private Dictionary<string, List<GameObject>> loadedObjectsDict = new Dictionary<string, List<GameObject>>(); // Dictionary to store loaded GameObjects from each asset bundle
-        private List<GameObject> placedObjects = new List<GameObject>(); // Keep track of placed objects
-        private int currentObjectIndex = 0; // Index of the currently selected object
-        private string currentAssetBundleName; // Name of the currently selected asset bundle
-        private List<string> assetBundleNames = new List<string>(); // List to store names of all loaded asset bundles
-        private GameObject[] loadedObjects; // Store loaded objects
-        
+        // Dictionary to store loaded GameObjects from each asset bundle
+        private Dictionary<string, List<GameObject>> loadedObjectsDict = new Dictionary<string, List<GameObject>>();
+
+        // List to keep track of placed objects
+        private List<GameObject> placedObjects = new List<GameObject>();
+
+        // Index of the currently selected object
+        private int currentObjectIndex = 0;
+
+        // Name of the currently selected asset bundle
+        private string currentAssetBundleName;
+
+        // List to store names of all loaded asset bundles
+        private List<string> assetBundleNames = new List<string>();
+
+        // Store loaded objects
+        private GameObject[] loadedObjects;
+
+        // Keybind for the "Build" button
         [Configgable("", "Build button")]
         private static ConfigKeybind Keybind = new ConfigKeybind(KeyCode.X);
         
+        // Keybind for switching asset bundles
         [Configgable("", "Switch asset bundle")]
         private static ConfigKeybind Keybind1 = new ConfigKeybind(KeyCode.N);
 
+        // Keybind for scrolling through the object list
         [Configgable("", "Scroll through object list")]
         private static ConfigKeybind Keybind3 = new ConfigKeybind(KeyCode.C);
 
+        // Config builder instance
         public static ConfigBuilder ConfigBuilder { get; private set; }
         
+        // Awake method called when the plugin is loaded
         void Awake()
         {
+            // Initialize config builder
             ConfigBuilder = new ConfigBuilder("doomahreal.ultrakill.Assetbundleloader", "Assetbundleloader");
             ConfigBuilder.Build();
 
+            // Load all asset bundles asynchronously
             StartCoroutine(LoadAllAssetBundles());
         }
 
+        // Coroutine to load all asset bundles
         IEnumerator LoadAllAssetBundles()
         {
+            // Get the directory containing the asset bundles
             string bundlesDirectory = GetBundlesDirectory();
             if (bundlesDirectory == null)
                 yield break;
 
+            // Load each asset bundle in the directory
             foreach (string bundlePath in Directory.GetFiles(bundlesDirectory, "*.bundle"))
             {
                 yield return LoadAssetBundle(bundlePath);
             }
 
+            // Set the first loaded asset bundle as the current one
             if (loadedObjectsDict.Count > 0)
             {
                 currentAssetBundleName = loadedObjectsDict.Keys.OrderBy(k => k).First();
@@ -64,6 +86,7 @@ namespace Secondultrakillmod
             }
         }
 
+        // Coroutine to load an individual asset bundle
         IEnumerator LoadAssetBundle(string bundlePath)
         {
             var assetBundleRequest = AssetBundle.LoadFromFileAsync(bundlePath);
@@ -88,6 +111,7 @@ namespace Secondultrakillmod
             assetBundle.Unload(false);
         }
 
+        // Get the directory containing the asset bundles
         string GetBundlesDirectory()
         {
             string pluginDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -103,6 +127,7 @@ namespace Secondultrakillmod
             return bundlesDirectory;
         }
 
+        // Load objects from the specified asset bundle
         void LoadObjectsFromAssetBundle(string bundleName)
         {
             if (loadedObjectsDict.TryGetValue(bundleName, out List<GameObject> prefabList))
@@ -116,6 +141,7 @@ namespace Secondultrakillmod
             }
         }
 
+        // Update method called once per frame
         void Update()
         {
             if (Input.GetKeyDown(Keybind.Value))
@@ -140,16 +166,18 @@ namespace Secondultrakillmod
             }
         }
 
+        // Check if the current asset bundle is missing
         bool CheckForMissingBundle()
         {
             if (loadedObjects == null || loadedObjects.Length == 0)
             {
-                Debug.Log("<color=red>Error: Asset bundle not loaded. Please check if you have the folder with the mod or an asset bundle.</color>");
+                MonoSingleton<HudMessageReceiver>.Instance.SendHudMessage("<colour=red>Error:You dont either have a assetbundle in HotLoadedBundles or you dont even have assetbundles, stupid.</colour>", "", "", 0, false);
                 return false;
             }
             return true;
         }
 
+        // Shoot a raycast to spawn objects
         void ShootRaycast()
         {
             if (loadedObjects != null && loadedObjects.Length > 0 && currentObjectIndex >= 0 && currentObjectIndex < loadedObjects.Length)
@@ -176,12 +204,14 @@ namespace Secondultrakillmod
             }
         }
 
+        // Scroll through the object list
         void ScrollObjectList(int direction)
         {
             currentObjectIndex = (currentObjectIndex + direction + loadedObjects.Length) % loadedObjects.Length;
             SendHudMessage();
         }
 
+        // Instantiate the currently selected object
         void InstantiateCurrentObject()
         {
             if (loadedObjects != null && loadedObjects.Length > 0 && currentObjectIndex >= 0 && currentObjectIndex < loadedObjects.Length)
@@ -193,6 +223,7 @@ namespace Secondultrakillmod
             }
         }
 
+        // Send HUD message with the name of the currently selected object
         void SendHudMessage()
         {
             if (loadedObjects != null && loadedObjects.Length > 0 && currentObjectIndex >= 0 && currentObjectIndex < loadedObjects.Length)
@@ -202,6 +233,7 @@ namespace Secondultrakillmod
             }
         }
 
+        // Switch to the next asset bundle
         void SwitchAssetBundle()
         {
             if (assetBundleNames.Count > 1)
