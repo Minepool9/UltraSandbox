@@ -6,7 +6,7 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq; // Added for LINQ
 using Configgy;
 
 namespace Secondultrakillmod
@@ -164,6 +164,9 @@ namespace Secondultrakillmod
                     ScrollObjectList(1);
                 }
             }
+
+            // Call the new function
+            ShootRaycastWithRotation();
         }
 
         // Check if the current asset bundle is missing
@@ -247,6 +250,55 @@ namespace Secondultrakillmod
             else
             {
                 Debug.Log("No other asset bundles available to switch to.");
+            }
+        }
+
+        // New function for shooting raycast with rotation
+        void ShootRaycastWithRotation()
+        {
+            // Check if the Spawner Arm is active and the player is holding the left mouse button and the R button
+            GameObject spawnerArm = GameObject.Find("Player/Main Camera/Guns/Spawner Arm(Clone) - MoveHand");
+            if (spawnerArm != null && Input.GetMouseButton(0) && Input.GetKey(KeyCode.R))
+            {
+                // Shoot a raycast
+                Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, float.MaxValue, LayerMaskDefaults.Get(LMD.Environment)))
+                {
+                    // If the raycast hits an object with SandboxProp component
+                    if (hit.collider.gameObject.GetComponent<Sandbox.SandboxProp>() != null)
+                    {
+                        // Rotate the object based on mouse movement
+                        StartCoroutine(RotateObject(hit.collider.gameObject));
+                    }
+                }
+            }
+        }
+
+        // Coroutine to rotate the object based on mouse movement
+        IEnumerator RotateObject(GameObject objToRotate)
+        {
+            // Record initial mouse position
+            Vector3 initialMousePosition = Input.mousePosition;
+
+            while (true)
+            {
+                // Calculate rotation based on mouse movement
+                Vector3 mouseDelta = (Input.mousePosition - initialMousePosition) * 0.1f;
+                objToRotate.transform.Rotate(Vector3.up, mouseDelta.x, Space.World);
+                objToRotate.transform.Rotate(Vector3.right, -mouseDelta.y, Space.World);
+
+                // Update initial mouse position
+                initialMousePosition = Input.mousePosition;
+
+                // Check if conditions have changed
+                if (!Input.GetKey(KeyCode.R) || !Input.GetMouseButton(0) || GameObject.Find("Player/Main Camera/Guns/Spawner Arm(Clone) - MoveHand") == null)
+                {
+                    yield break;
+                }
+
+                yield return null;
             }
         }
     }
