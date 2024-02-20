@@ -55,6 +55,9 @@ fucking understanding how shaders work so you dont have to manually change the s
 This one goes to all the folks of the [jaket](https://discord.gg/USpt3hCBgn) discord server 
 
 feincemaster
+
 kekson1a
+
 ardub92
+
 55ar.
