@@ -57,10 +57,13 @@ namespace Secondultrakillmod
 
             // Load all asset bundles asynchronously
             StartCoroutine(LoadAllAssetBundles());
+			
+			// Initialize Harmony
+			Harmony harmony = new Harmony("doomahreal.ultrakill.Assetbundleloader");
 
-            // Apply Harmony patches
-            Harmony harmony = new Harmony("doomahreal.ultrakill.Assetbundleloader");
-            harmony.PatchAll();
+			// Patch the ExperimentalArmRotationPatch.MoveMode_Update_Patch class
+			harmony.PatchAll(typeof(ExperimentalArmRotationPatch.MoveMode_Update_Patch));
+
         }
 
         // Coroutine to load all asset bundles
@@ -244,18 +247,7 @@ namespace Secondultrakillmod
                 LoadObjectsFromAssetBundle(currentAssetBundleName);
             }
         }
-
-        // Harmony patch for always enabling ExperimentalArmRotation
-        [HarmonyPatch(typeof(Sandbox.Arm.MoveMode), nameof(Sandbox.Arm.MoveMode.Update))]
-        public class MoveMode_Update_Patch
-        {
-            static void Postfix(Sandbox.Arm.MoveMode __instance)
-            {
-                // Always set ExperimentalArmRotation.Enabled to true
-                AccessTools.Field(typeof(ULTRAKILL.Cheats.ExperimentalArmRotation), "Enabled").SetValue(null, true);
-            }
-        }
-
+		
         // New function for shooting raycast with rotation
         void ShootRaycastWithRotation()
         {
