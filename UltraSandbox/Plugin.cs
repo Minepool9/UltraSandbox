@@ -228,7 +228,7 @@ namespace Secondultrakillmod
         {
             if (loadedObjects != null && loadedObjects.Length > 0 && currentObjectIndex >= 0 && currentObjectIndex < loadedObjects.Length)
             {
-                MonoSingleton<HudMessageReceiver>.Instance.SendHudMessage("<colour=green>Currently Selected Object: </colour>" + loadedObjects[currentObjectIndex].name + "</colour>", "", "", 0, false);
+                MonoSingleton<HudMessageReceiver>.Instance.SendHudMessage("<colour=green>Currently Selected Object: </colour>" + loadedObjects[currentObjectIndex].name, "", "", 0, false);
             }
         }
 
