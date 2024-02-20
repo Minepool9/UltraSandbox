@@ -48,3 +48,13 @@ and finally a "save" function
 # TO DO FOR MYSELF
 
 fucking understanding how shaders work so you dont have to manually change the shader of a material everytime you create an assetbundle, PLEASE IF YOU ARE MORE EXPERIENCED WITH HOW SHADERS WORK FUCKING MAKE A PULL REQUEST AND WRITE CODE FOR IT PLEASE I BEG YOU I JUST WANNA USE PSX/VERTEXLIT/VERTEXLIT
+
+
+# HALL OF SHAME (credits) 
+
+This one goes to all the folks of the [jaket](https://discord.gg/USpt3hCBgn) discord server 
+
+feincemaster
+kekson1a
+ardub92
+55ar.
