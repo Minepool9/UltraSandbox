@@ -7,7 +7,7 @@ Welcome to my repo! This is a pretty basic mod but the premise is for players to
 
 
 
-# Putting your assetbundle (NOTE: Current functionality of the mod only allows 1 asset bundle named "testassets" to be loaded however in the future this will be changed to load every bundle file in HotLoadedBundles)
+# Putting your assetbundle
 
 All of the assetbundles go into Bepinex/Plugins/HotLoadedBundles 
 
