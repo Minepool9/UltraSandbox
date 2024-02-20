@@ -9,9 +9,15 @@ Welcome to my repo! This is a pretty basic mod but the premise is for players to
 
 # Putting your assetbundle
 
-All of the assetbundles go into Bepinex/Plugins/HotLoadedBundles 
+All of the assetbundles go into Bepinex/Plugins/HotLoadedBundles, Remember the mod only loads .prefabs and not any fbx files make sure the prefab is size you want + has the box colliders.
 
 
+
+# WHAT THE MOD (likely) SUPPORTS 
+
+if it can be a prefab it can be loaded this includes entire maps (untested, maybe works without triggers idk how to give a trigger component or whatever)
+
+Ragdolls via unity's system of ragdoll implmentation (untested but most likely)
 
 # BUILDING THE MOD (note: this is different than building an actual assetbundle)
 
@@ -61,3 +67,6 @@ kekson1a
 ardub92
 
 55ar.
+
+
+And xzxadixzx for letting me use his v3 model
