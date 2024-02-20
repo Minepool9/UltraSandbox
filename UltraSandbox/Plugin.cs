@@ -178,7 +178,7 @@ namespace Secondultrakillmod
         {
             if (loadedObjects == null || loadedObjects.Length == 0)
             {
-                MonoSingleton<HudMessageReceiver>.Instance.SendHudMessage("<colour=red>Error:You dont either have a assetbundle in HotLoadedBundles or you dont even have assetbundles, stupid.</colour>", "", "", 0, false);
+                MonoSingleton<HudMessageReceiver>.Instance.SendHudMessage("<color=red>Error:You dont either have a assetbundle in HotLoadedBundles or you dont even have assetbundles, stupid.</color>", "", "", 0, false);
                 return false;
             }
             return true;
@@ -228,7 +228,7 @@ namespace Secondultrakillmod
         {
             if (loadedObjects != null && loadedObjects.Length > 0 && currentObjectIndex >= 0 && currentObjectIndex < loadedObjects.Length)
             {
-                MonoSingleton<HudMessageReceiver>.Instance.SendHudMessage("<colour=green>Currently Selected Object: </colour>" + loadedObjects[currentObjectIndex].name, "", "", 0, false);
+                MonoSingleton<HudMessageReceiver>.Instance.SendHudMessage("<color=green>Currently Selected Object: </color>" + loadedObjects[currentObjectIndex].name, "", "", 0, false);
             }
         }
 
