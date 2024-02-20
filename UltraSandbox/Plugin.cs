@@ -1,4 +1,4 @@
-using BepInEx;
+﻿using BepInEx;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,12 +8,14 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Linq; // Added for LINQ
 using Configgy;
+using static System.Runtime.CompilerServices.RuntimeHelpers;
+using System.Diagnostics;
 
-namespace Secondultrakillmod
+namespace UltraSandbox
 {
     [BepInPlugin("doomahreal.ultrakill.Assetbundleloader", "Assetbundleloader", "1.0.0")]
-    [BepInDependency("Hydraxous.ULTRAKILL.Configgy", BepInDependency.DependencyFlags.HardDependency)] 
-    public class Assetbundleloader : BaseUnityPlugin
+    [BepInDependency("Hydraxous.ULTRAKILL.Configgy", BepInDependency.DependencyFlags.HardDependency)]
+    internal class Plugin : BaseUnityPlugin
     {
         // Dictionary to store loaded GameObjects from each asset bundle
         private Dictionary<string, List<GameObject>> loadedObjectsDict = new Dictionary<string, List<GameObject>>();
@@ -36,7 +38,7 @@ namespace Secondultrakillmod
         // Keybind for the "Build" button
         [Configgable("", "Build button")]
         private static ConfigKeybind Keybind = new ConfigKeybind(KeyCode.X);
-        
+
         // Keybind for switching asset bundles
         [Configgable("", "Switch asset bundle")]
         private static ConfigKeybind Keybind1 = new ConfigKeybind(KeyCode.N);
@@ -47,7 +49,7 @@ namespace Secondultrakillmod
 
         // Config builder instance
         public static ConfigBuilder ConfigBuilder { get; private set; }
-        
+
         // Awake method called when the plugin is loaded
         void Awake()
         {
