@@ -6,7 +6,7 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
-using System.Linq; // Added for LINQ
+using System.Linq;
 using Configgy;
 
 namespace Secondultrakillmod
