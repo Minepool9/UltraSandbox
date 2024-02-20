@@ -57,6 +57,10 @@ namespace Secondultrakillmod
 
             // Load all asset bundles asynchronously
             StartCoroutine(LoadAllAssetBundles());
+
+            // Apply Harmony patches
+            Harmony harmony = new Harmony("doomahreal.ultrakill.Assetbundleloader");
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
         // Coroutine to load all asset bundles
@@ -207,11 +211,16 @@ namespace Secondultrakillmod
             }
         }
 
-        // Scroll through the object list
+        // Function to scroll through the list of objects
         void ScrollObjectList(int direction)
         {
-            currentObjectIndex = (currentObjectIndex + direction + loadedObjects.Length) % loadedObjects.Length;
-            SendHudMessage();
+            currentObjectIndex += direction;
+            if (currentObjectIndex < 0)
+                currentObjectIndex = loadedObjects.Length - 1;
+            if (currentObjectIndex >= loadedObjects.Length)
+                currentObjectIndex = 0;
+
+            InstantiateCurrentObject();
         }
 
         // Instantiate the currently selected object
@@ -219,37 +228,31 @@ namespace Secondultrakillmod
         {
             if (loadedObjects != null && loadedObjects.Length > 0 && currentObjectIndex >= 0 && currentObjectIndex < loadedObjects.Length)
             {
-                GameObject instantiatedObject = Instantiate(loadedObjects[currentObjectIndex], Vector3.zero, Quaternion.identity);
-                Rigidbody rb = instantiatedObject.AddComponent<Rigidbody>();
-                rb.useGravity = true;
-                placedObjects.Add(instantiatedObject);
+                MonoSingleton<HudMessageReceiver>.Instance.SendHudMessage("<colour=green>Currently Selected Object: </colour>" + loadedObjects[currentObjectIndex].name + "</colour>", "", "", 0, false);
             }
         }
 
-        // Send HUD message with the name of the currently selected object
-        void SendHudMessage()
-        {
-            if (loadedObjects != null && loadedObjects.Length > 0 && currentObjectIndex >= 0 && currentObjectIndex < loadedObjects.Length)
-            {
-                string selectedObjectName = loadedObjects[currentObjectIndex].name;
-                MonoSingleton<HudMessageReceiver>.Instance.SendHudMessage("Current object is: " + selectedObjectName, "", "", 0, false);
-            }
-        }
-
-        // Switch to the next asset bundle
+        // Switch to the next asset bundle in the list
         void SwitchAssetBundle()
         {
-            if (assetBundleNames.Count > 1)
+            if (assetBundleNames.Count > 0)
             {
                 int currentIndex = assetBundleNames.IndexOf(currentAssetBundleName);
-                int nextIndex = (currentIndex + 1) % assetBundleNames.Count;
-                currentAssetBundleName = assetBundleNames[nextIndex];
+                currentIndex = (currentIndex + 1) % assetBundleNames.Count;
+                currentAssetBundleName = assetBundleNames[currentIndex];
                 currentObjectIndex = 0; // Reset object index
                 LoadObjectsFromAssetBundle(currentAssetBundleName);
             }
-            else
+        }
+
+        // Harmony patch for always enabling ExperimentalArmRotation
+        [HarmonyPatch(typeof(Sandbox.Arm.MoveMode), nameof(Sandbox.Arm.MoveMode.Update))]
+        public class MoveMode_Update_Patch
+        {
+            static void Postfix(Sandbox.Arm.MoveMode __instance)
             {
-                Debug.Log("No other asset bundles available to switch to.");
+                // Always set ExperimentalArmRotation.Enabled to true
+                AccessTools.Field(typeof(ULTRAKILL.Cheats.ExperimentalArmRotation), "Enabled").SetValue(null, true);
             }
         }
 
