@@ -15,6 +15,8 @@ namespace Secondultrakillmod
     [BepInDependency("Hydraxous.ULTRAKILL.Configgy", BepInDependency.DependencyFlags.HardDependency)] 
     public class Assetbundleloader : BaseUnityPlugin
     {
+		private UIManager uiManager; // Instance of UIManager class
+		
         // Dictionary to store loaded GameObjects from each asset bundle
         private Dictionary<string, List<GameObject>> loadedObjectsDict = new Dictionary<string, List<GameObject>>();
 
@@ -57,6 +59,8 @@ namespace Secondultrakillmod
 
             // Load all asset bundles asynchronously
             StartCoroutine(LoadAllAssetBundles());
+			
+			uiManager = gameObject.AddComponent<UIManager>(); // Instantiate UIManager
 			
 			// Initialize Harmony
 			Harmony harmony = new Harmony("doomahreal.ultrakill.Assetbundleloader");
@@ -171,7 +175,20 @@ namespace Secondultrakillmod
                     ScrollObjectList(1);
                 }
             }
-
+			
+			if (Input.GetKeyDown(KeyCode.M))
+			{
+				Debug.Log("M key pressed");
+				if (!uiManager.isMenuOpen)
+				{
+					uiManager.OpenMenu();
+				}
+				else
+				{
+					uiManager.CloseMenu();
+				}
+			}
+			
             // Call the new function
             ShootRaycastWithRotation();
         }
