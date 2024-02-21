@@ -17,7 +17,7 @@ namespace Secondultrakillmod
         private static UIManager instance;
         private GameObject customMenu;
         private GameObject customCanvas;
-	public bool isMenuOpen = false; //amazing line myself how the fuck did i make this default to true
+	public bool isMenuOpen = false; // (clueless as to why i had to press m twice for it to open) the fucking bool i set to true:
 
         // Add this property to provide access to isMenuOpen
         public bool IsMenuOpen
