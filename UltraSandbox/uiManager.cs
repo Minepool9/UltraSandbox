@@ -17,7 +17,7 @@ namespace Secondultrakillmod
         private static UIManager instance;
         private GameObject customMenu;
         private GameObject customCanvas;
-	public bool isMenuOpen = false; // (clueless as to why i had to press m twice for it to open) the fucking bool i set to true:
+		public bool isMenuOpen = false;
 
         // Add this property to provide access to isMenuOpen
         public bool IsMenuOpen
@@ -39,45 +39,48 @@ namespace Secondultrakillmod
 
         void LoadUIBundle()
         {
-            // Get the directory where the assembly (DLL) is located
-            string assemblyLocation = Assembly.GetExecutingAssembly().Location;
-            string assemblyDirectory = Path.GetDirectoryName(assemblyLocation);
+            // Get the assembly where the script is located
+            Assembly assembly = Assembly.GetExecutingAssembly();
 
-            // Construct the path to the UI bundle file
-            string bundlePath = Path.Combine(assemblyDirectory, "ui.bundle");
-
-            if (File.Exists(bundlePath))
+            // Load the UI bundle from embedded resources
+            using (Stream stream = assembly.GetManifestResourceStream("Assetbundleloader.ui.bundle"))
             {
-                // Load the AssetBundle
-                AssetBundle uiBundle = AssetBundle.LoadFromFile(bundlePath);
-
-                if (uiBundle != null)
+                if (stream != null)
                 {
-                    // Load necessary assets from the bundle
-                    GameObject prefab = uiBundle.LoadAsset<GameObject>("CustomCanvas");
+                    byte[] bundleData = new byte[stream.Length];
+                    stream.Read(bundleData, 0, bundleData.Length);
 
-                    // You might want to check if prefab is not null before instantiating
-                    if (prefab != null)
+                    // Load the AssetBundle from memory
+                    AssetBundle uiBundle = AssetBundle.LoadFromMemory(bundleData);
+
+                    if (uiBundle != null)
                     {
-                        customCanvas = Instantiate(prefab, customMenu.transform);
-                        customCanvas.SetActive(false);
+                        // Load necessary assets from the bundle
+                        GameObject prefab = uiBundle.LoadAsset<GameObject>("CustomCanvas");
+
+                        // You might want to check if prefab is not null before instantiating
+                        if (prefab != null)
+                        {
+                            customCanvas = Instantiate(prefab, customMenu.transform);
+                            customCanvas.SetActive(false);
+                        }
+                        else
+                        {
+                            Debug.LogError("Failed to load prefab from UI bundle.");
+                        }
+
+                        // Unload the AssetBundle to free up memory
+                        uiBundle.Unload(false);
                     }
                     else
                     {
-                        Debug.LogError("Failed to load prefab from UI bundle.");
+                        Debug.LogError("Failed to load UI bundle.");
                     }
-
-                    // Unload the AssetBundle to free up memory
-                    uiBundle.Unload(false);
                 }
                 else
                 {
-                    Debug.LogError("Failed to load UI bundle.");
+                    Debug.LogError("UI bundle resource not found.");
                 }
-            }
-            else
-            {
-                Debug.LogError("UI bundle file not found: " + bundlePath);
             }
         }
 
