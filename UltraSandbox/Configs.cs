@@ -7,19 +7,19 @@ namespace UltraSandbox
     {
         // Keybind for the "Build" button
         [Configgable("Keybinds", "Build button")]
-        internal static ConfigKeybind buildB = new ConfigKeybind(KeyCode.X);
+        internal static ConfigInputField<string> buildB = new ConfigInputField<string>("X");
 
         // Keybind for switching asset bundles
         [Configgable("Keybinds", "Switch asset bundle")]
-        internal static ConfigKeybind switchB = new ConfigKeybind(KeyCode.N);
+        internal static ConfigInputField<string> switchB = new ConfigInputField<string>("N");
 
         // Keybind for scrolling through the object list
         [Configgable("Keybinds", "Scroll through object list")]
-        internal static ConfigKeybind scrollB = new ConfigKeybind(KeyCode.C);
+        internal static ConfigInputField<string> scrollB = new ConfigInputField<string>("C");
 
         // Keybind for opening/closing the menu
         [Configgable("Keybinds", "Scroll through object list")]
-        internal static ConfigKeybind menuB = new ConfigKeybind(KeyCode.M);
+        internal static ConfigInputField<string> menuB = new ConfigInputField<string>("M");
 
         // Keybind for scrolling through the object list
         [Configgable("Debug", "Use ULTRAKILL's debug arm rotation")]
