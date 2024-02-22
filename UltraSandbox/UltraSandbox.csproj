@@ -23,6 +23,10 @@
 	<Reference Include="lib\UnityUIExtensions.dll" />
 	<Reference Include="lib\UnityEngine.CoreModule.dll" />
 	<Reference Include="lib\Configgy.dll" />
+	<Reference Include="lib\Unity.InputSystem.dll" />
+	<Reference Include="lib\UnityEngine.AnimationModule.dll" />
+	<Reference Include="lib\UnityEngine.InputLegacyModule.dll" />
+	<Reference Include="lib\\UnityEngine.PhysicsModule.dll" />
   </ItemGroup>
 
 	<ItemGroup>
