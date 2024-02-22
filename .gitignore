@@ -33,6 +33,7 @@
 
 # Paths
 .vs/*
+UltraSandbox/.vs/*
 UltraSandbox/obj/*
 UltraSandbox/bin/*
 *.csproj
