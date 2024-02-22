@@ -15,15 +15,17 @@ public class MouseLook : MonoBehaviour
         Transform playerTransform = GameObject.FindWithTag("Player").transform;
         foreach (Transform child in playerTransform)
         {
-            if (child.CompareTag("MainCamera"))
+            bool tmp = true;
+            if (!child.CompareTag("MainCamera")) tmp = false;
+
+            // Check if the child already has a MouseLook component attached
+            if (child.GetComponent<MouseLook>() != null) tmp = false;
+
+            if (tmp)
             {
-                // Check if the child already has a MouseLook component attached
-                if (child.GetComponent<MouseLook>() == null)
-                {
-                    // Attach MouseLook component to the camera
-                    MouseLook mouseLook = child.gameObject.AddComponent<MouseLook>();
-                    mouseLook.playerBody = playerBody;
-                }
+                // Attach MouseLook component to the camera
+                MouseLook mouseLook = child.gameObject.AddComponent<MouseLook>();
+                mouseLook.playerBody = playerBody;
             }
         }
     }
