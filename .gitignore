@@ -32,7 +32,6 @@
 *.app
 
 # Paths
-Wiki images/*
 .vs/*
 UltraSandbox/obj/*
 UltraSandbox/bin/*
