@@ -1,14 +1,8 @@
 using UnityEngine;
-using BepInEx;
-using HarmonyLib;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using System.Collections;
 using System.IO;
 using System.Reflection;
-using System.Collections.Generic;
-using System.Linq; // Added for LINQ
-using Configgy;
 
 namespace Secondultrakillmod
 {
@@ -17,7 +11,7 @@ namespace Secondultrakillmod
         private static UIManager instance;
         private GameObject customMenu;
         private GameObject customCanvas;
-		public bool isMenuOpen = false;
+        public bool isMenuOpen = false;
 
         // Add this property to provide access to isMenuOpen
         public bool IsMenuOpen
@@ -30,7 +24,7 @@ namespace Secondultrakillmod
         {
             instance = this;
             customMenu = new GameObject("Custom Menu");
-            DontDestroyOnLoad(customMenu);
+            DontDestroyOnLoad(customMenu); // Don't destroy the parent menu object
 
             LoadUIBundle();
             InstantiateCustomCanvas();
@@ -63,6 +57,30 @@ namespace Secondultrakillmod
                         {
                             customCanvas = Instantiate(prefab, customMenu.transform);
                             customCanvas.SetActive(false);
+
+                            // Find the button component from the customCanvas children
+                            Transform buttonTransform = customCanvas.transform.Find("Button");
+                            if (buttonTransform != null)
+                            {
+                                Button button = buttonTransform.GetComponent<Button>();
+                                if (button != null)
+                                {
+                                    // Add a listener to the button's click event
+                                    button.onClick.AddListener(() =>
+                                    {
+                                        CloseMenu();
+                                        Debug.Log("Close button pressed.");
+                                    });
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("Button component not found on child named 'Button'.");
+                                }
+                            }
+                            else
+                            {
+                                Debug.LogWarning("Child named 'Button' not found in CustomCanvas.");
+                            }
                         }
                         else
                         {
@@ -88,18 +106,6 @@ namespace Secondultrakillmod
         {
             customCanvas = Instantiate(Resources.Load<GameObject>("CustomCanvas"), customMenu.transform);
             customCanvas.SetActive(false);
-
-            // Get the button component from the customCanvas
-            Button closeButton = customCanvas.GetComponentInChildren<Button>();
-            if (closeButton != null)
-            {
-                // Add a listener to the button's click event
-                closeButton.onClick.AddListener(CloseMenu);
-            }
-            else
-            {
-                Debug.LogWarning("Button not found in CustomCanvas.");
-            }
         }
 
         void InitializeMenuState()
@@ -115,6 +121,8 @@ namespace Secondultrakillmod
                 isMenuOpen = true;
                 customCanvas.SetActive(true);
                 PlayAnimation("openanimation");
+                UnlockCursor();
+                LockCameraRotation();
             }
         }
 
@@ -123,8 +131,10 @@ namespace Secondultrakillmod
             if (isMenuOpen)
             {
                 isMenuOpen = false;
-                PlayAnimation("closeanimation");
                 customCanvas.SetActive(false);
+                PlayAnimation("closeanimation");
+                LockCursor();
+                UnlockCameraRotation();
             }
         }
 
@@ -140,5 +150,68 @@ namespace Secondultrakillmod
                 Debug.LogWarning("Animator component not found on CustomCanvas.");
             }
         }
+
+        void LockCameraRotation()
+        {
+            Camera[] playerCameras = GetComponentsInChildren<Camera>();
+            foreach (Camera camera in playerCameras)
+            {
+                if (camera != null)
+                {
+                    // Lock camera rotation (Assuming MouseLook is a script handling camera rotation)
+                    MouseLook mouseLook = camera.GetComponent<MouseLook>();
+                    if (mouseLook != null)
+                    {
+                        mouseLook.enabled = false;
+                    }
+                    else
+                    {
+                        Debug.LogWarning("MouseLook script not found on camera.");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("Camera not found.");
+                }
+            }
+        }
+
+        void UnlockCameraRotation()
+        {
+            Camera[] playerCameras = GetComponentsInChildren<Camera>();
+            foreach (Camera camera in playerCameras)
+            {
+                if (camera != null)
+                {
+                    // Unlock camera rotation (Assuming MouseLook is a script handling camera rotation)
+                    MouseLook mouseLook = camera.GetComponent<MouseLook>();
+                    if (mouseLook != null)
+                    {
+                        mouseLook.enabled = true;
+                    }
+                    else
+                    {
+                        Debug.LogWarning("MouseLook script not found on camera.");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("Camera not found.");
+                }
+            }
+        }
+
+        void LockCursor()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
+        void UnlockCursor()
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
 }
+
