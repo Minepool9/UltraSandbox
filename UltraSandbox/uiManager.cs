@@ -118,7 +118,7 @@ namespace Secondultrakillmod
 
         void PopulateObjectButtons()
         {
-            GameObject customScrollView = GameObject.Find("CustomScroll(Clone)");
+            GameObject customScrollView = GameObject.Find("CustomScroll (Clone)");
             if (customScrollView != null)
             {
                 logger.LogInfo("CustomScroll(Clone) found in the scene.");
