@@ -14,18 +14,16 @@ namespace Secondultrakillmod
     public class UIManager : MonoBehaviour
     {
         private static UIManager instance;
-        private GameObject customMenu;
+        private GameObject customMenu; // Unused field
         private GameObject customCanvas;
         private GameObject customScroll;
+        private GameObject objectButtonPrefab; // New field to store Objectbutton prefab
         public bool isMenuOpen = false;
-        private bool populateButtonsSuccess = false;
-        private ManualLogSource logger;
         private bool uiBundleLoaded = false;
 
         void Awake()
         {
             instance = this;
-            logger = BepInEx.Logging.Logger.CreateLogSource("UIManager");
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
@@ -74,7 +72,7 @@ namespace Secondultrakillmod
                         }
                         else
                         {
-                            logger.LogError("Failed to load prefab from UI bundle.");
+                            Debug.LogError("Failed to load prefab from UI bundle.");
                         }
 
                         // Load CustomScroll here
@@ -86,7 +84,18 @@ namespace Secondultrakillmod
                         }
                         else
                         {
-                            logger.LogError("Failed to load CustomScroll prefab from UI bundle.");
+                            Debug.LogError("Failed to load CustomScroll prefab from UI bundle.");
+                        }
+
+                        // Load Objectbutton prefab
+                        prefab = uiBundle.LoadAsset<GameObject>("Objectbutton");
+                        if (prefab != null)
+                        {
+                            objectButtonPrefab = prefab;
+                        }
+                        else
+                        {
+                            Debug.LogError("Failed to load Objectbutton prefab from UI bundle.");
                         }
 
                         uiBundle.Unload(false);
@@ -94,12 +103,12 @@ namespace Secondultrakillmod
                     }
                     else
                     {
-                        logger.LogError("Failed to load UI bundle.");
+                        Debug.LogError("Failed to load UI bundle.");
                     }
                 }
                 else
                 {
-                    logger.LogError("UI bundle resource not found.");
+                    Debug.LogError("UI bundle resource not found.");
                 }
             }
         }
@@ -116,55 +125,31 @@ namespace Secondultrakillmod
             customScroll.SetActive(false);
         }
 
-        void PopulateObjectButtons()
-        {
-            GameObject customScrollView = GameObject.Find("CustomScroll (Clone)");
-            if (customScrollView != null)
-            {
-                logger.LogInfo("CustomScroll(Clone) found in the scene.");
+		void PopulateObjectButtons()
+		{
+			StartCoroutine(WaitForUIElements());
+		}
 
-                Transform content = customScrollView.transform.Find("Scroll View/Viewport/Content");
-                if (content != null)
-                {
-                    logger.LogInfo("Content found under CustomScroll(Clone)'s hierarchy.");
+		IEnumerator WaitForUIElements()
+		{
+			while (customCanvas == null || customScroll == null)
+			{
+				yield return null;
+			}
 
-                    GameObject objectButtonPrefab = Resources.Load<GameObject>("Objectbutton");
-                    if (objectButtonPrefab != null)
-                    {
-                        Assetbundleloader plugin = FindObjectOfType<Assetbundleloader>();
-                        if (plugin != null && plugin.loadedObjects != null)
-                        {
-                            logger.LogInfo("Object button prefab loaded successfully.");
-                            foreach (GameObject obj in plugin.loadedObjects)
-                            {
-                                GameObject objButton = Instantiate(objectButtonPrefab, content);
-                                Text changeMeText = objButton.transform.Find("Changeme").GetComponent<Text>();
-                                changeMeText.text = obj.name;
-                            }
-                            // Set the flag to true if the method ran successfully
-                            populateButtonsSuccess = true;
-                        }
-                        else
-                        {
-                            logger.LogError("Assetbundleloader or loadedObjects not found.");
-                        }
-                    }
-                    else
-                    {
-                        logger.LogError("Object button prefab not found.");
-                    }
-                }
-                else
-                {
-                    logger.LogError("Content not found under CustomScroll(Clone)'s hierarchy.");
-                }
-            }
-            else
-            {
-                logger.LogWarning("CustomScroll(Clone) not found in the scene.");
-            }
-        }
-
+			Transform contentTransform = customScroll.transform.Find("Scroll View/Viewport/Content");
+			if (contentTransform != null)
+			{
+				GameObject content = contentTransform.gameObject;
+				GameObject objectButton = Instantiate(objectButtonPrefab, content.transform);
+        
+			}
+			else
+			{
+				Debug.LogError("Content not found under Scroll View/Viewport/Content.");
+			}
+		}
+		
         void InitializeMenuState()
         {
             if (customCanvas != null)
@@ -210,7 +195,7 @@ namespace Secondultrakillmod
             }
             else
             {
-                logger.LogError("Animator component not found on CustomCanvas.");
+                Debug.LogError("Animator component not found on CustomCanvas.");
             }
         }
 
@@ -237,7 +222,3 @@ namespace Secondultrakillmod
         }
     }
 }
-
-
-
-// fenice im so gonna kill myself if we cant fucking fix the stupid ass menu
