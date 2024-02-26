@@ -18,7 +18,7 @@ All of the assetbundles go into Bepinex/Plugins/HotLoadedBundles, Remember the m
 
 if it can be a prefab it can be loaded this includes entire maps (untested, maybe works without triggers idk how to give a trigger component or whatever)
 
-Ragdolls via unity's system of ragdoll implmentation (untested but most likely)
+~~Ragdolls via unity's system of ragdoll implmentation (untested but most likely)~~
 
 # BUILDING THE MOD (note: this is different than building an actual assetbundle)
 
