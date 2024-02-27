@@ -7,13 +7,22 @@ Welcome to my repo! This is a pretty basic mod but the premise is for players to
 
 
 
-# Putting your assetbundle
+# Putting your assetbundle and creating a model pack for thunderstore
 
 [Making a assetbundle](https://github.com/Minepool9/UltraSandbox/wiki/)
 
 All of the assetbundles go into Bepinex/Plugins/HotLoadedBundles, Remember the mod only loads .prefabs and not any fbx files make sure the prefab is size you want + has the box colliders, AND MAKE SURE THE BUNDLE well has a .bundle extension to it (should be added via the script)
 
-**note: the ui.bundle goes with the dll not in HotloadedBundles! Remember every actual bundle goes to that folder however the ui.bundle gets compiled with the dll itself**
+To create a model pack for thunderstore please remove the testbundles from the HotLoadedBundles folder and add yours then complete thunderstore's mandatory manifest readme and icon stuff then simiply with the folder's name as it is "HotLoadedBundles" just zip it up
+
+Example:
+
+![image](https://github.com/Minepool9/UltraSandbox/assets/97184060/f43facd5-56dd-4a8e-b5f5-7288fa304a97)
+
+and inside of HotLoadedBundles..
+
+![image](https://github.com/Minepool9/UltraSandbox/assets/97184060/1b09046d-c7dd-4772-b519-b349f8f41b10)
+
 
 # WHAT THE MOD (likely) SUPPORTS 
 
