@@ -14,10 +14,9 @@ namespace Secondultrakillmod
     public class UIManager : MonoBehaviour
     {
         private static UIManager instance;
-        private GameObject customMenu; // Unused field
         private GameObject customCanvas;
         private GameObject customScroll;
-        private GameObject objectButtonPrefab; // New field to store Objectbutton prefab
+        private GameObject objectButtonPrefab;
         public bool isMenuOpen = false;
         private bool uiBundleLoaded = false;
 
@@ -75,7 +74,6 @@ namespace Secondultrakillmod
                             Debug.LogError("Failed to load prefab from UI bundle.");
                         }
 
-                        // Load CustomScroll here
                         prefab = uiBundle.LoadAsset<GameObject>("CustomScroll");
                         if (prefab != null)
                         {
@@ -87,7 +85,6 @@ namespace Secondultrakillmod
                             Debug.LogError("Failed to load CustomScroll prefab from UI bundle.");
                         }
 
-                        // Load Objectbutton prefab
                         prefab = uiBundle.LoadAsset<GameObject>("Objectbutton");
                         if (prefab != null)
                         {
@@ -99,7 +96,7 @@ namespace Secondultrakillmod
                         }
 
                         uiBundle.Unload(false);
-                        uiBundleLoaded = true; // Set the flag to true when UI bundle is loaded
+                        uiBundleLoaded = true;
                     }
                     else
                     {
@@ -125,31 +122,52 @@ namespace Secondultrakillmod
             customScroll.SetActive(false);
         }
 
-		void PopulateObjectButtons()
-		{
-			StartCoroutine(WaitForUIElements());
-		}
+        void PopulateObjectButtons()
+        {
+            if (customScroll != null)
+            {
+                Transform viewport = customScroll.transform.Find("Scroll View/Viewport");
+                if (viewport != null)
+                {
+                    Transform content = viewport.Find("Content");
+                    if (content != null)
+                    {
+                        foreach (Transform child in content)
+                        {
+                            Destroy(child.gameObject);
+                        }
 
-		IEnumerator WaitForUIElements()
-		{
-			while (customCanvas == null || customScroll == null)
-			{
-				yield return null;
-			}
+                        if (objectButtonPrefab != null)
+                        {
+                            int numberOfButtons = 5;
 
-			Transform contentTransform = customScroll.transform.Find("Scroll View/Viewport/Content");
-			if (contentTransform != null)
-			{
-				GameObject content = contentTransform.gameObject;
-				GameObject objectButton = Instantiate(objectButtonPrefab, content.transform);
-        
-			}
-			else
-			{
-				Debug.LogError("Content not found under Scroll View/Viewport/Content.");
-			}
-		}
-		
+                            for (int i = 0; i < numberOfButtons; i++)
+                            {
+                                GameObject button = Instantiate(objectButtonPrefab, content.transform);
+                                // Optionally, you can set properties or add listeners to the button here
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogError("Objectbutton prefab is not assigned.");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError("Content not found under Viewport.");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("Viewport not found under Scroll View.");
+                }
+            }
+            else
+            {
+                Debug.LogError("CustomScroll is not assigned.");
+            }
+        }
+
         void InitializeMenuState()
         {
             if (customCanvas != null)
