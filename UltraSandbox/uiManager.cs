@@ -19,6 +19,7 @@ namespace Secondultrakillmod
         private GameObject objectButtonPrefab;
         public bool isMenuOpen = false;
         private bool uiBundleLoaded = false;
+		private static GunControl gc => GunControl.Instance;
 
         void Awake()
         {
@@ -232,11 +233,13 @@ namespace Secondultrakillmod
         void DisableCamera()
         {
             CameraController.Instance.enabled = false;
+			gc.enabled = false;
         }
 
         void EnableCamera()
         {
             CameraController.Instance.enabled = true;
+			gc.enabled = false;
         }
     }
 }
