@@ -9,10 +9,12 @@ Welcome to my repo! This is a pretty basic mod but the premise is for players to
 
 # Putting your assetbundle
 
+[Making a assetbundle](https://github.com/Minepool9/UltraSandbox/wiki/)
+
 All of the assetbundles go into Bepinex/Plugins/HotLoadedBundles, Remember the mod only loads .prefabs and not any fbx files make sure the prefab is size you want + has the box colliders.
 
 
-**note: the ui.bundle goes with the dll not in HotloadedBundles! Remember every actual bundle goes to that folder however the ui.bundle goes with the dll itself**
+**note: the ui.bundle goes with the dll not in HotloadedBundles! Remember every actual bundle goes to that folder however the ui.bundle gets compiled with the dll itself**
 
 # WHAT THE MOD (likely) SUPPORTS 
 
