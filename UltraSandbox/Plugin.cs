@@ -1,13 +1,13 @@
 using BepInEx;
 using HarmonyLib;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq; // Added for LINQ
 using Configgy;
+using UnityEngine.SceneManagement;
 
 namespace Secondultrakillmod
 {
@@ -15,7 +15,7 @@ namespace Secondultrakillmod
     [BepInDependency("Hydraxous.ULTRAKILL.Configgy", BepInDependency.DependencyFlags.HardDependency)] 
     public class Assetbundleloader : BaseUnityPlugin
     {
-		private UIManager uiManager; // Instance of UIManager class
+		private GameObject uiManager; // Instance of UIManager class
 		
         // Dictionary to store loaded GameObjects from each asset bundle
         private Dictionary<string, List<GameObject>> loadedObjectsDict = new Dictionary<string, List<GameObject>>();
@@ -59,14 +59,15 @@ namespace Secondultrakillmod
 
             // Load all asset bundles asynchronously
             StartCoroutine(LoadAllAssetBundles());
-			
-			uiManager = gameObject.AddComponent<UIManager>(); // Instantiate UIManager
-			
-			// Initialize Harmony
-			Harmony harmony = new Harmony("doomahreal.ultrakill.Assetbundleloader");
+
+            uiManager = new GameObject("UIManager");
+            uiManager.AddComponent<UIManager>();
+
+            // Initialize Harmony
+            Harmony harmony = new Harmony("doomahreal.ultrakill.Assetbundleloader");
 
 			// Patch the ExperimentalArmRotationPatch.MoveMode_Update_Patch class
-			harmony.PatchAll(typeof(ExperimentalArmRotationPatch.MoveMode_Update_Patch));
+			harmony.PatchAll(typeof(ExperimentalArmRotationPatch));
 
         }
 
