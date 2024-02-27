@@ -27,7 +27,7 @@ if it can be a prefab it can be loaded this includes entire maps (untested, mayb
 
 # TO DO FOR REPO
 
-1.wiki
+~~1.wiki~~
 
 2.building instructions
 
