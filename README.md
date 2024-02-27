@@ -23,22 +23,11 @@ if it can be a prefab it can be loaded this includes entire maps (untested, mayb
 [![wowie!](https://github.com/Minepool9/UltraSandbox/assets/97184060/f856c55f-2cbe-477a-a564-064ac61c162a)](https://github.com/Minepool9/UltraSandbox/assets/97184060/5ffa56ca-db16-4198-852c-f69b19490a2f)
 
 
-
-
-
-
-
-# BUILDING THE MOD (note: this is different than building an actual assetbundle)
-
-[Just look at the readme here](https://github.com/Minepool9/UltraSandbox/blob/main/UltraSandbox/README.md)
-
-
-
 # TO DO FOR REPO
 
 1.wiki
 
-~~2.building instructions~~
+2.building instructions
 
 
 
@@ -46,7 +35,7 @@ if it can be a prefab it can be loaded this includes entire maps (untested, mayb
 
 ~~loading more than 1 assetbundle~~
 
-rotating any object in sandbox
+~~rotating any object in sandbox~~
 
 making ragdolls be able to be moved and interactable 
 
@@ -60,9 +49,11 @@ and finally a "save" function
 
 
 
-# TO DO FOR MYSELF
+# TO DO FOR MYSELF AND FOR CONSTTRIBUTORS TO DO 
 
 fucking understanding how shaders work so you dont have to manually change the shader of a material everytime you create an assetbundle, PLEASE IF YOU ARE MORE EXPERIENCED WITH HOW SHADERS WORK FUCKING MAKE A PULL REQUEST AND WRITE CODE FOR IT PLEASE I BEG YOU I JUST WANNA USE PSX/VERTEXLIT/VERTEXLIT
+
+get the menu to fucking work
 
 
 # HALL OF BIG NERDS (credits) 
