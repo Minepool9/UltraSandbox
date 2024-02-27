@@ -1,9 +1,5 @@
 using UnityEngine;
 using BepInEx;
-using BepInEx.Logging;
-using HarmonyLib;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.IO;
@@ -19,7 +15,7 @@ namespace Secondultrakillmod
         private GameObject objectButtonPrefab;
         public bool isMenuOpen = false;
         private bool uiBundleLoaded = false;
-		private static GunControl gc => GunControl.Instance;
+        private static GunControl gc => GunControl.Instance;
 
         void Awake()
         {
@@ -39,7 +35,7 @@ namespace Secondultrakillmod
 
         IEnumerator InitializeUIAfterDelay()
         {
-            yield return new WaitForSeconds(1); // Adjust the delay as needed
+            yield return new WaitForSeconds(7); // Adjust the delay as needed
             LoadUIBundle();
             while (!uiBundleLoaded)
                 yield return null; // Wait until the UI bundle is fully loaded
@@ -54,61 +50,43 @@ namespace Secondultrakillmod
             Assembly assembly = Assembly.GetExecutingAssembly();
             using (Stream stream = assembly.GetManifestResourceStream("Assetbundleloader.ui.bundle"))
             {
-                if (stream != null)
-                {
-                    byte[] bundleData = new byte[stream.Length];
-                    stream.Read(bundleData, 0, bundleData.Length);
-
-                    AssetBundle uiBundle = AssetBundle.LoadFromMemory(bundleData);
-
-                    if (uiBundle != null)
-                    {
-                        GameObject prefab = uiBundle.LoadAsset<GameObject>("CustomCanvas");
-
-                        if (prefab != null)
-                        {
-                            customCanvas = Instantiate(prefab);
-                            customCanvas.SetActive(false);
-                        }
-                        else
-                        {
-                            Debug.LogError("Failed to load prefab from UI bundle.");
-                        }
-
-                        prefab = uiBundle.LoadAsset<GameObject>("CustomScroll");
-                        if (prefab != null)
-                        {
-                            customScroll = Instantiate(prefab);
-                            customScroll.SetActive(false);
-                        }
-                        else
-                        {
-                            Debug.LogError("Failed to load CustomScroll prefab from UI bundle.");
-                        }
-
-                        prefab = uiBundle.LoadAsset<GameObject>("Objectbutton");
-                        if (prefab != null)
-                        {
-                            objectButtonPrefab = prefab;
-                        }
-                        else
-                        {
-                            Debug.LogError("Failed to load Objectbutton prefab from UI bundle.");
-                        }
-
-                        uiBundle.Unload(false);
-                        uiBundleLoaded = true;
-                    }
-                    else
-                    {
-                        Debug.LogError("Failed to load UI bundle.");
-                    }
-                }
-                else
+                if (stream == null)
                 {
                     Debug.LogError("UI bundle resource not found.");
+                    return;
                 }
+
+                byte[] bundleData = new byte[stream.Length];
+                stream.Read(bundleData, 0, bundleData.Length);
+
+                AssetBundle uiBundle = AssetBundle.LoadFromMemory(bundleData);
+
+                if (uiBundle == null)
+                {
+                    Debug.LogError("Failed to load UI bundle.");
+                    return;
+                }
+
+                customCanvas = InstantiatePrefabFromBundle(uiBundle, "CustomCanvas");
+                customScroll = InstantiatePrefabFromBundle(uiBundle, "CustomScroll");
+                objectButtonPrefab = uiBundle.LoadAsset<GameObject>("Objectbutton");
+
+                uiBundle.Unload(false);
+                uiBundleLoaded = true;
             }
+        }
+
+        GameObject InstantiatePrefabFromBundle(AssetBundle bundle, string prefabName)
+        {
+            GameObject prefab = bundle.LoadAsset<GameObject>(prefabName);
+            if (prefab == null)
+            {
+                Debug.LogError($"Failed to load {prefabName} prefab from UI bundle.");
+                return null;
+            }
+            GameObject instance = Instantiate(prefab);
+            instance.SetActive(false);
+            return instance;
         }
 
         void InstantiateCustomCanvas()
@@ -125,47 +103,41 @@ namespace Secondultrakillmod
 
         void PopulateObjectButtons()
         {
-            if (customScroll != null)
-            {
-                Transform viewport = customScroll.transform.Find("Scroll View/Viewport");
-                if (viewport != null)
-                {
-                    Transform content = viewport.Find("Content");
-                    if (content != null)
-                    {
-                        foreach (Transform child in content)
-                        {
-                            Destroy(child.gameObject);
-                        }
-
-                        if (objectButtonPrefab != null)
-                        {
-                            int numberOfButtons = 5;
-
-                            for (int i = 0; i < numberOfButtons; i++)
-                            {
-                                GameObject button = Instantiate(objectButtonPrefab, content.transform);
-                                // Optionally, you can set properties or add listeners to the button here
-                            }
-                        }
-                        else
-                        {
-                            Debug.LogError("Objectbutton prefab is not assigned.");
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogError("Content not found under Viewport.");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("Viewport not found under Scroll View.");
-                }
-            }
-            else
+            if (customScroll == null)
             {
                 Debug.LogError("CustomScroll is not assigned.");
+                return;
+            }
+
+            Transform viewport = customScroll.transform.Find("Scroll View/Viewport");
+            if (viewport == null)
+            {
+                Debug.LogError("Viewport not found under Scroll View.");
+                return;
+            }
+
+            Transform content = viewport.Find("Content");
+            if (content == null)
+            {
+                Debug.LogError("Content not found under Viewport.");
+                return;
+            }
+
+            foreach (Transform child in content)
+            {
+                Destroy(child.gameObject);
+            }
+
+            if (objectButtonPrefab == null)
+            {
+                Debug.LogError("Objectbutton prefab is not assigned.");
+                return;
+            }
+
+            int numberOfButtons = 5;
+            for (int i = 0; i < numberOfButtons; i++)
+            {
+                Instantiate(objectButtonPrefab, content.transform);
             }
         }
 
@@ -183,8 +155,7 @@ namespace Secondultrakillmod
             {
                 isMenuOpen = true;
                 customCanvas.SetActive(true);
-                if (customScroll != null)
-                    customScroll.SetActive(true);
+                customScroll?.SetActive(true);
                 PlayAnimation("openanimation");
                 UnlockCursor();
                 DisableCamera();
@@ -197,8 +168,7 @@ namespace Secondultrakillmod
             {
                 isMenuOpen = false;
                 customCanvas.SetActive(false);
-                if (customScroll != null)
-                    customScroll.SetActive(false);
+                customScroll?.SetActive(false);
                 PlayAnimation("closeanimation");
                 LockCursor();
                 EnableCamera();
@@ -208,14 +178,12 @@ namespace Secondultrakillmod
         void PlayAnimation(string animationName)
         {
             Animator animator = customCanvas.GetComponent<Animator>();
-            if (animator != null)
-            {
-                animator.Play(animationName);
-            }
-            else
+            if (animator == null)
             {
                 Debug.LogError("Animator component not found on CustomCanvas.");
+                return;
             }
+            animator.Play(animationName);
         }
 
         void LockCursor()
@@ -233,13 +201,13 @@ namespace Secondultrakillmod
         void DisableCamera()
         {
             CameraController.Instance.enabled = false;
-			gc.enabled = false;
+            gc.enabled = false;
         }
 
         void EnableCamera()
         {
             CameraController.Instance.enabled = true;
-			gc.enabled = false;
+            gc.enabled = false;
         }
     }
 }
