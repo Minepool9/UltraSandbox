@@ -16,6 +16,8 @@ namespace Secondultrakillmod
     public class Assetbundleloader : BaseUnityPlugin
     {
 		private GameObject uiManager; // Instance of UIManager class
+
+        private UIManager uim;
 		
         // Dictionary to store loaded GameObjects from each asset bundle
         private Dictionary<string, List<GameObject>> loadedObjectsDict = new Dictionary<string, List<GameObject>>();
@@ -62,6 +64,7 @@ namespace Secondultrakillmod
 
             uiManager = new GameObject("UIManager");
             uiManager.AddComponent<UIManager>();
+            uim = uiManager.GetComponent<UIManager>();
 
             // Initialize Harmony
             Harmony harmony = new Harmony("doomahreal.ultrakill.Assetbundleloader");
@@ -176,17 +179,17 @@ namespace Secondultrakillmod
                     ScrollObjectList(1);
                 }
             }
-			
+
 			if (Input.GetKeyDown(KeyCode.M))
 			{
 				Debug.Log("M key pressed");
-				if (!uiManager.isMenuOpen)
+				if (!uim.isMenuOpen)
 				{
-					uiManager.OpenMenu();
+                    uim.OpenMenu();
 				}
 				else
 				{
-					uiManager.CloseMenu();
+                    uim.CloseMenu();
 				}
 			}
 			
