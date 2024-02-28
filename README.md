@@ -5,7 +5,15 @@
 
 Welcome to my repo! This is a pretty basic mod but the premise is for players to be able to make "model packs" that can be loaded within the game to make a sort of "garrys mod addon" feel 
 
+# **CONTROLS**
 
+All controls can be changed via configgy however the default are
+
+* x to place
+
+* c to change the current selected object
+
+* n changing the currently loaded bundle
 
 # Putting your assetbundle and creating a model pack for thunderstore
 
