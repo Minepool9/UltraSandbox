@@ -19,7 +19,7 @@ All controls can be changed via configgy however the default are
 
 [Making a assetbundle](https://github.com/Minepool9/UltraSandbox/wiki/)
 
-**REMINDER:THERE ARE 2 DEFAULT ASSETBUNDLES WITHIN THE MOD WHICH 1 HAS 9 MODELS AND THE OTHER HAS 1)**
+**REMINDER:THERE ARE 2 DEFAULT ASSETBUNDLES WITHIN THE MOD WHICH 1 HAS 9 MODELS AND THE OTHER HAS 1**
 
 All of the assetbundles go into bepinex/plugins/doomahreal-ultrasandbox, Remember the mod only loads .prefabs and not any fbx files make sure the prefab is size you want + has the box colliders, AND MAKE SURE THE BUNDLE well has a .bundle extension to it (should be added via the script)
 
