@@ -21,7 +21,7 @@ All controls can be changed via configgy however the default are
 
 All of the assetbundles go into bepinex/plugins/doomahreal-ultrasandbox, Remember the mod only loads .prefabs and not any fbx files make sure the prefab is size you want + has the box colliders, AND MAKE SURE THE BUNDLE well has a .bundle extension to it (should be added via the script)
 
-To create a model pack for thunderstore please remove the testbundles from the HotLoadedBundles folder and add yours then complete thunderstore's mandatory manifest readme and icon stuff then simiply with the folder's name as it is "HotLoadedBundles" just zip it up BUT make sure to tell the user to move the .bundle inside bepinex/plugins/ultrasandbox
+To create a model pack for thunderstore please add the complete thunderstore's mandatory manifest readme and icon stuff then simiply with the folder's name as it is "HotLoadedBundles" just zip it up BUT make sure to tell the user to move the .bundle inside bepinex/plugins/ultrasandbox
 
 Example:
 
