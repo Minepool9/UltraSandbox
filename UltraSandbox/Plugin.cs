@@ -11,14 +11,11 @@ using UnityEngine.SceneManagement;
 
 namespace Secondultrakillmod
 {
-    [BepInPlugin("doomahreal.ultrakill.Assetbundleloader", "Assetbundleloader", "1.0.0")]
+    [BepInPlugin("doomahreal.ultrakill.Assetbundleloader", "Assetbundleloader", "0.1.1")]
     [BepInDependency("Hydraxous.ULTRAKILL.Configgy", BepInDependency.DependencyFlags.HardDependency)] 
     public class Assetbundleloader : BaseUnityPlugin
     {
-		private GameObject uiManager; // Instance of UIManager class
-
-        private UIManager uim;
-		
+        
         // Dictionary to store loaded GameObjects from each asset bundle
         private Dictionary<string, List<GameObject>> loadedObjectsDict = new Dictionary<string, List<GameObject>>();
 
@@ -30,9 +27,9 @@ namespace Secondultrakillmod
 
         // Name of the currently selected asset bundle
         private string currentAssetBundleName;
-		
-		// Make loadedObjects public for access from UIManager
-		public GameObject[] loadedObjects;
+        
+        // Make loadedObjects public for access from UIManager
+        public GameObject[] loadedObjects;
 
         // List to store names of all loaded asset bundles
         private List<string> assetBundleNames = new List<string>();
@@ -62,16 +59,13 @@ namespace Secondultrakillmod
             // Load all asset bundles asynchronously
             StartCoroutine(LoadAllAssetBundles());
 
-            uiManager = new GameObject("UIManager");
-            uiManager.AddComponent<UIManager>();
-            uim = uiManager.GetComponent<UIManager>();
+
 
             // Initialize Harmony
             Harmony harmony = new Harmony("doomahreal.ultrakill.Assetbundleloader");
 
-			// Patch the ExperimentalArmRotationPatch.MoveMode_Update_Patch class
-			harmony.PatchAll(typeof(ExperimentalArmRotationPatch));
-
+            // Patch the ExperimentalArmRotationPatch.MoveMode_Update_Patch class
+            harmony.PatchAll(typeof(ExperimentalArmRotationPatch));
         }
 
         // Coroutine to load all asset bundles
@@ -97,7 +91,7 @@ namespace Secondultrakillmod
             }
             else
             {
-                Debug.Log("No asset bundles found in the HotLoadedBundles folder.");
+                Debug.Log("No asset bundles found in the directory where the DLL is located.");
             }
         }
 
@@ -129,17 +123,20 @@ namespace Secondultrakillmod
         // Get the directory containing the asset bundles
         string GetBundlesDirectory()
         {
+            // Get the directory where the DLL is located
             string pluginDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string parentDirectory = Path.GetDirectoryName(pluginDirectory);
-            string bundlesDirectory = Path.Combine(parentDirectory, "HotLoadedBundles");
 
-            if (!Directory.Exists(bundlesDirectory))
+            // Get all files with the .bundle extension in the plugin directory
+            string[] bundleFiles = Directory.GetFiles(pluginDirectory, "*.bundle");
+
+            if (bundleFiles.Length == 0)
             {
-                Debug.Log("Folder 'HotLoadedBundles' not found. Please check if you have the folder with the mod or an asset bundle.");
+                Debug.Log("No .bundle files found in the directory where the DLL is located.");
                 return null;
             }
 
-            return bundlesDirectory;
+            // Return the plugin directory
+            return pluginDirectory;
         }
 
         // Load objects from the specified asset bundle
@@ -179,20 +176,7 @@ namespace Secondultrakillmod
                     ScrollObjectList(1);
                 }
             }
-
-			if (Input.GetKeyDown(KeyCode.M))
-			{
-				Debug.Log("M key pressed");
-				if (!uim.isMenuOpen)
-				{
-                    uim.OpenMenu();
-				}
-				else
-				{
-                    uim.CloseMenu();
-				}
-			}
-			
+            
             // Call the new function
             ShootRaycastWithRotation();
         }
@@ -268,7 +252,7 @@ namespace Secondultrakillmod
                 LoadObjectsFromAssetBundle(currentAssetBundleName);
             }
         }
-		
+        
         // New function for shooting raycast with rotation
         void ShootRaycastWithRotation()
         {
